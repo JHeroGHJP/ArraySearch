@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <math.h>
 
-#define tamanho 2
+#define tamanho 100
 
 void preencher (int vetor[])
 {
@@ -26,35 +26,65 @@ void buscaSequencial (int vetor[], int buscado)
     
     if (status == 0)
     {
-        printf ("Número [%i] não encontrado!\n", buscado);
+        printf ("Número [%i] não encontrado! (Busca sequencial)\n", buscado);
     }
     else
     {
-        printf ("Número [%i] encontrado!\n", buscado);
+        printf ("Número [%i] encontrado! (Busca sequencial)\n", buscado);
     }
 }
 
-void buscaBinaria (int vetor[], int buscado, int inicio, int fim)
+int buscaBinariaRec(int vetor[], int inicio, int fim, int buscado)
 {
     if (fim < inicio)
     {
-        printf ("Número [%i] não foi encontrado!.\n", buscado);
+        printf ("Número [%i] não encontrado! (Busca binaria recursiva)\n", buscado);
+        return -1;
     }
     
-    int meio = inicio + ((inicio + fim)/2);
+    int meio = inicio + (fim - inicio)/2;
     
-    if (vetor[meio] < buscado)
+    if (buscado < vetor[meio])
     {
-        buscaBinaria (vetor, buscado, meio + 1, tamanho);
+        return buscaBinariaRec(vetor, inicio, meio-1, buscado);
     }
-    else if (vetor[meio] > buscado)
+    else if (buscado > vetor[meio])
     {
-        buscaBinaria (vetor, buscado, 0, meio - 1);
+        return buscaBinariaRec(vetor, meio+1, fim, buscado);
     }
     else
     {
-        printf ("Número [%i] encontrado!\n", buscado);
+        printf ("Número [%i] encontrado! (Busca binaria recursiva)\n", buscado);
+        return meio;
     }
+}
+
+
+int buscaBinariaIte(int vetor[], int inicio, int fim, int buscado)
+{
+    int meio;
+    
+    while (inicio <= fim)
+    {
+        meio = inicio + (fim - inicio)/2;
+        
+        if (buscado > vetor[meio])
+        {
+            inicio = meio + 1;
+        }
+        else if (buscado < vetor[meio])
+        {
+            fim = meio - 1;
+        }
+        else
+        {
+            printf ("Número [%i] encontrado! (Busca binaria iterativa)\n", buscado);
+            return meio;
+        }
+    }
+    
+    printf ("Número [%i] não encontrado! (Busca binaria iterativa)\n", buscado);
+    return -1;
 }
 
 void mostrar (int vetor[])
@@ -91,6 +121,7 @@ void main()
 {
     int vetor[100];
     int buscado;
+    int binaryStatus;
     
     preencher (vetor);
     
@@ -101,7 +132,10 @@ void main()
     printf ("Digite um número para buscar: ");
     scanf ("%i", &buscado);
     
+    binaryStatus = buscaBinariaIte (vetor, 0, tamanho - 1, buscado);
+    
+    binaryStatus = buscaBinariaRec (vetor, 0, tamanho - 1, buscado);
+    
     buscaSequencial (vetor, buscado);
     
-    buscaBinaria (vetor, buscado, 0, tamanho);
 }
